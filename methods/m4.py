@@ -147,7 +147,10 @@ class Estimator(base.M):
 
   def _grad(self):
     """Calculate gradient w.r.t. (err_inf, err_0)."""
-    log_f = np.log(self._fv())
+    if np.any(self._fv()<=0):
+      log_f = np.log(self._fv() + 1e-1)
+    else:
+      log_f = np.log(self._fv())
     log_g = np.log(self._gv())
     residual = log_g - log_f
     # gradients

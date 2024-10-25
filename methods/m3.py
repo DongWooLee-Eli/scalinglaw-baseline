@@ -90,7 +90,10 @@ class Estimator(base.M):
     values by the solving the equation exactly for each single data size x. We
     then pick the best value among those in the grid.
     """
-    gamma_vals = (self.y / self.beta) ** (1 / self.c) - 1 / self.x
+    if self.c == 0:
+      gamma_vals = (self.y / (self.beta)) ** (1 / (self.c+1e-1)) - 1 / self.x
+    else:
+      gamma_vals = (self.y / self.beta) ** (1 / self.c) - 1 / self.x
     best_gamma = self.gamma  # current estimate
     best_loss = self._get_objt()
 
