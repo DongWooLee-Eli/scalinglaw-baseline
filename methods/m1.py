@@ -15,7 +15,7 @@
 
 """Scaling law estimator M1.
 """
-from revisiting_neural_scaling_laws.methods import m2
+from methods import m2
 
 
 class Estimator(m2.Estimator):

@@ -20,7 +20,7 @@ from typing import Optional
 import numpy as np
 import sklearn.linear_model
 
-from revisiting_neural_scaling_laws.methods import base
+from methods import base
 
 
 class Estimator(base.M):
