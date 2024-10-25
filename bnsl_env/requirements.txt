@@ -1,0 +1,5 @@
+flax==0.8.5
+jax==0.4.33
+kfac-jax==0.0.5
+pandas
+matplotlib

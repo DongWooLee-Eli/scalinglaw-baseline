@@ -1,0 +1,55 @@
+# Use an official Python runtime as a parent image
+FROM python:3.10.12-slim
+
+# Create a working directory
+WORKDIR /app
+
+# Remove any third-party apt sources to avoid issues with expiring keys.
+RUN rm -f /etc/apt/sources.list.d/*.list
+
+# Install system dependencies and update the package list
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpng-dev \
+    libfreetype6-dev \
+    libatlas-base-dev \
+    libopenblas-dev \
+    wget \
+    ca-certificates \
+    git \
+    bzip2 \
+    libx11-6 \
+    sudo \
+    tmux \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user and switch to it
+ARG UID=1000
+ARG USER=ciplab
+ARG GID=1000
+ARG GROUP=ciplab
+RUN addgroup --gid $GID $GROUP \
+    && adduser --disabled-password --gecos '' --uid $UID --gid $GID $USER \
+    && chown -R $USER:$GROUP /app
+
+# All users can use /home/user as their home directory
+ENV HOME=/home/$USER
+RUN mkdir -p $HOME/.cache $HOME/.config \
+    && chown -R $USER:$GROUP $HOME
+
+# Switch to the non-root user
+USER $USER
+
+# Copy requirements for installation
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install ipykernel -U --force-reinstall
+
+RUN pip uninstall kfac-jax -y
+RUN pip install git+https://github.com/google-deepmind/kfac-jax@d3643a1ad85cd34ce9ec096a64c5a44708743217
+
+CMD ["bash"]
